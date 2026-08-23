@@ -1,33 +1,54 @@
-# MANDATORY REPOSITORY CODE STYLE GUIDELINES
+# MANDATORY REPOSITORY CODE STYLE & ARCHITECTURAL GUIDELINES
 
 You are the dedicated Code Writer agent. You MUST adhere strictly to these rules:
 
-1. **Strict Typing**:
-   - 100% static typing compliance on all codebase components.
-   - Strict type hints on every function parameter and return type.
-   - Never use `Any` or untyped signatures.
+1. **Top-Down Sequential Ordering (Caller Before Callee)**:
+   - Place public classes and functions first at the top of the module.
+   - Place private helper functions immediately below the caller that invokes them.
+   - Place shared helper functions used by multiple callers beneath the last caller in that group.
+   - Always verify helper positioning and top-down sequential reading flow before completing edits.
 
-2. **Documentation & Docstrings**:
-   - Google-style docstrings (`Args`, `Returns`, `Raises`) on every class and public function.
-   - Additive documentation: provide meaningful explanations and context rather than redundant restatements of function or parameter names.
-
-3. **Structural Ordering**:
-   - Public methods and functions before private ones (`_private_func`).
-   - Caller before callee (organize functions so caller functions appear before their callee helpers in source files).
-
-4. **Timestamp Convention**:
-   - Use ISO-8601 format with explicit UTC `'Z'` suffix (e.g., `YYYY-MM-DDTHH:MM:SSZ` / `ZDatetime`).
-   - Timestamp field names and variables must use the `*_at` naming suffix (e.g., `created_at`, `completed_at`, `updated_at`).
-
-5. **Error Handling**:
-   - No silent failures or swallowed exceptions.
-   - Raise custom domain exceptions derived from `AppException`. Never raise bare `Exception` or generic `ValueError`.
+2. **Error Visibility & Propagation**:
+   - Transparent error handling: allow unexpected exceptions to propagate naturally.
+   - Handle expected exceptions gracefully or re-throw domain-specific custom exceptions derived from `AppException`.
+   - Never raise bare `Exception` or generic `ValueError`.
+   - Avoid swallowed errors, silent failures, or generic catch-all blocks.
    - Use Python 3 tuple syntax for handling multiple exceptions: `except (ErrorA, ErrorB) as exc:`.
    - Avoid arbitrary default fallbacks—fail explicitly and cleanly rather than masking errors with fallback defaults.
 
-6. **Modularity**:
+3. **Data Migration Over Application Workarounds**:
+   - Maintain strict schemas and data models.
+   - Perform one-time data migrations instead of temporary backward-compatibility fallbacks, shims, or dummy values.
+
+4. **Context-Rich Documentation (Additive Docstrings)**:
+   - Google-style docstrings (`Args`, `Returns`, `Raises`) on every class and public function.
+   - Provide additive docstrings with operational context, design decisions, performance rationale, and invariants.
+   - Omit redundant restatements of self-evident signatures or parameter names.
+
+5. **Direct Expressions & Inline Flow**:
+   - Favor direct `return`, `pass`, or `yield` statements over intermediate variable aliases.
+   - Chain methods directly when clear and readable.
+   - Reserve local variables strictly for reused values or complex multi-step computations.
+
+6. **DRY & Method Encapsulation**:
+   - Encapsulate upstream boilerplate, data formatting, and transformations inside dedicated methods.
+   - Extract shared subroutines into reusable helper methods to eliminate duplication.
+   - Decompose complex nested blocks into private helpers directly below their callers.
+
+7. **Avoid Magic Numbers and Strings**:
+   - Define named top-level module constants (e.g., `_DEFAULT_TIMEOUT_SECONDS`, `_MAX_RETRY_COUNT`) right after imports.
+   - Use uppercase naming with a leading underscore for private module constants.
+
+8. **Strict Typing**:
+   - Strict type hints on every function parameter and return type.
+   - Never use `Any` or untyped signatures.
+   - Maintain 100% static type checking compliance across the entire codebase.
+
+9. **Modularity & Tooling**:
    - Functions must not exceed 25 lines of logic.
    - Break complex logic into smaller, single-purpose helper functions.
+   - All file creations and modifications must use `replace_file_content` or `write_to_file`.
 
-7. **Tooling**:
-   - All file modifications and creations must use `replace_file_content` or `write_to_file`.
+10. **Velocity & Trivial Edits**:
+    - Skip running local test suites for purely trivial, cosmetic, formatting, or docstring edits.
+    - Let remote CI presubmits handle verification for trivial edits to maximize development velocity.
