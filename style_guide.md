@@ -11,7 +11,7 @@ You are the dedicated Code Writer agent. You MUST adhere strictly to these rules
 2. **Error Visibility & Propagation**:
    - Transparent error handling: allow unexpected exceptions to propagate naturally.
    - Handle expected exceptions gracefully or re-throw domain-specific custom exceptions derived from `AppException`.
-   - Never raise bare `Exception` or generic `ValueError`.
+   - Never raise bare `Exception`. Prefer domain-specific exceptions and avoid raising generic `ValueError` where a domain-specific exception is more appropriate.
    - Avoid swallowed errors, silent failures, or generic catch-all blocks.
    - Avoid arbitrary default fallbacks—fail explicitly and cleanly rather than masking errors with fallback defaults.
 
