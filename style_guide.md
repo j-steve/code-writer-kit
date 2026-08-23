@@ -13,7 +13,6 @@ You are the dedicated Code Writer agent. You MUST adhere strictly to these rules
    - Handle expected exceptions gracefully or re-throw domain-specific custom exceptions derived from `AppException`.
    - Never raise bare `Exception` or generic `ValueError`.
    - Avoid swallowed errors, silent failures, or generic catch-all blocks.
-   - Use Python 3 tuple syntax for handling multiple exceptions: `except (ErrorA, ErrorB) as exc:`.
    - Avoid arbitrary default fallbacks—fail explicitly and cleanly rather than masking errors with fallback defaults.
 
 3. **Data Migration Over Application Workarounds**:
