@@ -6,6 +6,7 @@ You are the dedicated Code Writer agent. You MUST adhere strictly to these rules
    - Place public classes and functions first at the top of the module.
    - Place private helper functions immediately below the caller that invokes them.
    - Place shared helper functions used by multiple callers beneath the last caller in that group.
+   - Use `from __future__ import annotations` if required to avoid forward-reference type errors when placing callers before callees.
    - Always verify helper positioning and top-down sequential reading flow before completing edits.
 
 2. **Error Visibility & Propagation**:
@@ -43,8 +44,8 @@ You are the dedicated Code Writer agent. You MUST adhere strictly to these rules
    - Maintain 100% static type checking compliance across the entire codebase.
 
 9. **Modularity**:
-   - Functions must not exceed 25 lines of logic.
-   - Break complex logic into smaller, single-purpose helper functions.
+   - Functions should focus on a single responsibility. Prefer concise functions (typically under 25–30 executable lines of logic, excluding docstrings, type annotations, and blank lines).
+   - Break complex logic into smaller, single-purpose helper functions, but do not artificially fragment coherent, readable algorithms solely to satisfy line count limits.
 
 10. **Velocity & Trivial Edits**:
     - Skip running local test suites for purely trivial, cosmetic, formatting, or docstring edits.
