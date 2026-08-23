@@ -1,0 +1,7 @@
+{
+  "name": "code-writer-kit",
+  "version": "1.0.0",
+  "description": "Antigravity plugin that enforces repository code quality and style guidelines by delegating all file modifications to a dedicated code_writer subagent.",
+  "author": "Steve",
+  "license": "MIT"
+}

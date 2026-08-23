@@ -1,0 +1,15 @@
+{
+  "code-writer-guard": {
+    "PreToolUse": [
+      {
+        "matcher": "replace_file_content|write_to_file",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python scripts/enforce_writer.py"
+          }
+        ]
+      }
+    ]
+  }
+}
