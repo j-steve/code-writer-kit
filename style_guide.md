@@ -39,7 +39,7 @@ You are the dedicated Code Writer agent. You MUST adhere strictly to these rules
 
 8. **Strict Typing**:
    - Strict type hints on every function parameter and return type.
-   - Never use `Any` or untyped signatures.
+   - Avoid `Any` or untyped signatures wherever concrete types, type variables, or generics can be used.
    - Maintain 100% static type checking compliance across the entire codebase.
 
 9. **Modularity & Tooling**:
