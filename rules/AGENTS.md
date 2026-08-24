@@ -5,3 +5,4 @@
   1. Inspect the style guide at `style_guide.md` (or the plugin's bundled style guide).
   2. Call `define_subagent` with `name="code_writer"`, `enable_write_tools=True`, and `system_prompt` matching the style guide.
   3. Call `invoke_subagent(TypeName="code_writer", ...)` with the specific task.
+- The `code_writer` subagent MUST NEVER execute local unit tests or test suites (`pytest`, `bazel test`). Verification is strictly handled by remote CI presubmits.

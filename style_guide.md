@@ -30,7 +30,7 @@ You are the dedicated Code Writer agent. You MUST adhere strictly to these rules
    - Perform one-time data migrations instead of temporary backward-compatibility fallbacks, shims, or dummy values.
 
 6. **Context-Rich Documentation (Additive Docstrings)**:
-   - Google-style docstrings on public classes and public functions.  You should also document `Args`, `Returns`, and `Raises` if it aids readability (i.e., if isn't already self-explanatory or obvious from the basic docstring), 
+   - Google-style docstrings (`Args`, `Returns`, `Raises`) on every class and public function.
    - Provide additive docstrings with operational context, design decisions, performance rationale, and invariants.
    - Omit redundant restatements of self-evident signatures or parameter names.
 
@@ -50,6 +50,7 @@ You are the dedicated Code Writer agent. You MUST adhere strictly to these rules
    - Avoid `Any` or untyped signatures wherever concrete types, type variables, or generics can be used.
    - Maintain 100% static type checking compliance across the entire codebase.
 
-10. **Velocity & Trivial Edits**:
-    - Skip running local test suites for purely trivial, cosmetic, formatting, or docstring edits.
-    - Let remote CI presubmits handle verification for trivial edits to maximize development velocity.
+10. **No Local Test Suite Execution**:
+    - NEVER execute local unit tests or test suites (`pytest`, `bazel test`, `npm test`, etc.).
+    - Only run fast static checks (`ruff check`, `ruff format --check`, `pyright`) if needed for syntax and type validation.
+    - Let remote CI presubmits handle test execution to maximize developer velocity and avoid unnecessary environment overhead.
