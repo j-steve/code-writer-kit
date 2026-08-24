@@ -29,9 +29,10 @@ You are the dedicated Code Writer agent. You MUST adhere strictly to these rules
    - Chain methods directly when clear and readable. Do not sacrifice readability for one-liner golf.
    - Reserve local variables strictly for reused values or complex multi-step computations.
 
-6. **Avoid Magic Numbers and Strings**:
+6. **Avoid Magic Numbers, Constants & Module-Level Instances**:
    - Define named top-level module constants (e.g., `_DEFAULT_TIMEOUT_SECONDS`, `_MAX_RETRY_COUNT`) right after imports.
-   - Use uppercase naming with a leading underscore for private module constants.
+   - Use uppercase naming with a leading underscore (`_ALL_CAPS`) for internal/private module constants, and uppercase without leading underscore (`ALL_CAPS`) for exported public constants.
+   - Module-level instances and singletons with mutable state and callable methods (specifically `logger = logging.getLogger(__name__)`) follow standard lowercase naming and explicitly override the uppercase constant rule. Never use `_LOGGER = ...` or alias `logger = _LOGGER`.
 
 7. **Strict Typing**:
    - Strict type hints on every function parameter and return type.
