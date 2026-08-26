@@ -8,7 +8,7 @@
 
 1. [Overview](#overview)
 2. [How It Works](#how-it-works)
-3. [Modular Style Skills](#modular-style-skills)
+3. [Modular Multi-Skill Architecture](#modular-multi-skill-architecture)
 4. [Agent Interaction & Delegation Workflow](#agent-interaction--delegation-workflow)
 5. [Installation](#installation)
    - [Option 1: Quick Install Scripts](#option-1-quick-install-scripts)
@@ -29,7 +29,7 @@ When building complex software systems with autonomous agents, having unstructur
 **`code-writer-kit` solves this by introducing a deterministic lifecycle gate**:
 - File writing tools (`replace_file_content` and `write_to_file`) are intercepted by a **`PreToolUse` hook**.
 - Direct write attempts by the root agent are **hard-blocked** with actionable error messages.
-- Modifications are permitted only when executed by the dedicated **`code_writer` subagent** which dynamically loads the relevant modular style skills (e.g. `skills/python-style/SKILL.md`).
+- Modifications are permitted only when executed by the dedicated **`code_writer` subagent** which dynamically loads the mandatory baseline `code-style` skill and relevant language-specific style skills (e.g. `skills/python-style/SKILL.md`).
 
 ---
 
@@ -51,29 +51,51 @@ sequenceDiagram
         Hook-->>RootAgent: {"decision": "deny", "reason": "HARD BLOCK: Must delegate to code_writer"}
     end
     RootAgent->>Subagent: invoke_subagent(TypeName="code_writer", Prompt="Implement feature...")
+    Note over Subagent: Loads code-style baseline + language-specific skills
     Subagent->>Hook: Tool call: replace_file_content / write_to_file
     Hook->>Hook: Inspect transcript / caller ID -> Verified as code_writer
     Hook-->>Subagent: {"decision": "allow"}
-    Subagent->>Filesystem: Write changes adhering to style guide
+    Subagent->>Filesystem: Write changes adhering to style guides
     Subagent-->>RootAgent: Completion report
     RootAgent-->>User: Summary of completed changes
 ```
 
 ---
 
-## Modular Style Skills
- 
-Style guides are organized as modular skills under `skills/` (for example, `skills/python-style/SKILL.md`). When invoked, the `code_writer` subagent inspects its available skills and loads the relevant style guidelines for the target language.
- 
-Key Python coding standards defined in `skills/python-style/SKILL.md` include:
- 
-1. **Top-Down Sequential Ordering**: Place public classes and callers first, with private helpers immediately below their callers.
-2. **Modularity & Single Responsibility**: Concise functions with explicit call-site parameter extraction rather than monolithic context passthrough.
-3. **DRY & Cross-Module Sharing**: Single authoritative modules for constants, schemas, and helpers.
-4. **Error Visibility**: Domain-specific custom exceptions; no swallowed errors or arbitrary default fallbacks.
-5. **Strict Typing**: 100% static type coverage without bare `Any` or untyped signatures.
-6. **Context-Rich Documentation**: Google-style additive docstrings explaining design rationale and invariants.
-7. **Targeted Verification**: Fast static checks and isolated unit tests over monolithic test suites.
+## Modular Multi-Skill Architecture
+
+Style guides and architectural standards are organized into a layered, modular skill hierarchy under `skills/`:
+
+### 1. Mandatory Skill Loading Protocol
+
+Whenever the `code_writer` subagent is invoked, it must adhere to a strict multi-skill loading protocol before modifying code:
+1. **Always Load Baseline `code-style` Skill**: For **ANY** code modification, the subagent MUST load the baseline `code-style` skill (`skills/code-style/SKILL.md`) from its Available skills list.
+2. **In Addition, Load Language-Specific Skills**: IN ADDITION to `code-style`, the subagent MUST ALSO load the corresponding language-specific skill(s) for the target files being modified (such as `python-style` for Python files via `skills/python-style/SKILL.md`, `typescript-style` for TypeScript files, etc.).
+3. **Workspace Augmentations**: If workspace-specific style skills or workspace root style guidelines (e.g., `<workspace_root>/style_guide.md` or `<workspace_root>/.agents/style_guide.md`) are present, load and augment the guidelines with them, giving project-specific rules precedence in case of conflict.
+
+---
+
+### 2. Baseline Standards (`skills/code-style/SKILL.md`)
+
+Language-agnostic architectural invariants required for all code modifications:
+- **Modularity & Single Responsibility**: Concise functions (typically under 25–30 lines of logic) with explicit call-site parameter extraction rather than passing monolithic configuration/context down into leaf helpers.
+- **DRY & Single Source of Truth**: Centralize shared constants, schemas, models, and subroutines in dedicated authoritative modules; no duplicate definitions.
+- **Error Visibility & Propagation**: Custom domain exceptions, transparent error propagation, no swallowed exceptions or silent fallback defaults.
+- **Data Migration Over Application Workarounds**: Maintain strict schemas and perform one-time data migrations instead of adding runtime backward-compatibility shims.
+- **Direct Expressions & Inline Flow**: Direct `return`/`yield` statements, prohibition of single-use intermediate variable aliases for object attributes.
+- **Avoid Magic Numbers & Hardcoded Constants**: Top-level named constants and structured enumerations instead of scattered raw values.
+- **Targeted Verification vs. Monolithic Test Suites**: Fast static checks and isolated unit tests; never run monolithic full-repo test suites locally.
+
+---
+
+### 3. Language-Specific Standards (e.g., `skills/python-style/SKILL.md`)
+
+Python-specific standards layered on top of the baseline:
+- **Top-Down Sequential Ordering**: Public callers placed first, private helper functions placed immediately below their callers, `from __future__ import annotations` at the top of every module.
+- **Strict Typing**: 100% static type hint coverage on all parameters and return types without bare `Any`.
+- **Context-Rich Google Docstrings**: Additive docstrings with `Args:`, `Returns:`, and `Raises:` providing operational rationale.
+- **Logger & Constant Naming**: `_ALL_CAPS` for internal module constants, `ALL_CAPS` for exported public constants, structured `StrEnum` classes, and lowercase `logger = logging.getLogger(__name__)`.
+- **Fast Static Verification**: Targeted checks (`ruff`, `pyright`, `mypy`) and isolated unit tests.
 
 ---
 
@@ -185,8 +207,10 @@ code-writer-kit/
 ├── scripts/
 │   └── enforce_writer.py    # PreToolUse gate script
 └── skills/
+    ├── code-style/
+    │   └── SKILL.md         # Baseline coding standards & architectural invariants
     └── python-style/
-        └── SKILL.md         # Modular Python coding standards & architectural rules
+        └── SKILL.md         # Python-specific coding standards & conventions
 ```
 
 ---
@@ -235,7 +259,7 @@ You can toggle the plugin globally or per workspace via `config.json`:
 ```
 
 ### Customizing Style Rules
-To adjust rules (e.g. max function length, docstring formats) or add standards for other languages, modify `skills/python-style/SKILL.md` or add new skill directories under `skills/`.
+To adjust baseline rules, modify `skills/code-style/SKILL.md`. To adjust language-specific rules or add standards for other languages, modify `skills/python-style/SKILL.md` or add new skill directories under `skills/` (e.g. `skills/typescript-style/SKILL.md`).
 
 ---
 
