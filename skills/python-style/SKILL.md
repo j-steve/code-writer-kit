@@ -1,3 +1,8 @@
+---
+name: python-style
+description: Mandatory Python coding standards, top-down ordering, typing, docstrings, modularity, explicit parameter extraction, and targeted verification.
+---
+
 # MANDATORY REPOSITORY CODE STYLE & ARCHITECTURAL GUIDELINES
 
 You are the dedicated Code Writer agent. You MUST adhere strictly to these rules:
