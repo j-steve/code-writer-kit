@@ -53,8 +53,7 @@ def execute_guard() -> dict[str, str]:
     if is_authorized_writer(transcript_path):
         return {"decision": "allow"}
 
-    guide_path: str = resolve_style_guide_path()
-    return build_deny_response(target_file, guide_path)
+    return build_deny_response(target_file)
 
 
 def read_hook_payload() -> dict[str, object]:
@@ -137,33 +136,21 @@ def is_authorized_writer(transcript_path: str) -> bool:
         return False
 
 
-def resolve_style_guide_path() -> str:
-    """Resolves the absolute path to the bundled style guide file.
-
-    Returns:
-        Normalized absolute path string to style_guide.md.
-    """
-    script_dir: str = os.path.dirname(os.path.abspath(__file__))
-    return os.path.normpath(os.path.join(script_dir, "..", "style_guide.md"))
-
-
-def build_deny_response(target_file: str, guide_path: str) -> dict[str, str]:
+def build_deny_response(target_file: str) -> dict[str, str]:
     """Constructs a hard-block decision dictionary for unauthorized writes.
 
     Args:
         target_file: The file path targeted by the write operation.
-        guide_path: Absolute path to the style guide file.
 
     Returns:
         Dictionary payload containing the denial decision and instructions.
     """
     reason_lines: list[str] = [
         f"HARD BLOCK: Direct modification of '{target_file}' by the root agent is disallowed.",
-        "The primary purpose of the `code_writer` subagent is to strictly enforce the repository style guide.",
+        "The primary purpose of the `code_writer` subagent is to strictly enforce repository style guidelines.",
         "",
         "MANDATORY ACTION REQUIRED:",
-        "1. Call `invoke_subagent(TypeName='code_writer', Role='Code Writer', Prompt='...')` to execute the change.",
-        f"2. (Fallback if code_writer is not defined: read {guide_path} and call `define_subagent` first).",
+        "Call `invoke_subagent(TypeName='code_writer', Role='Code Writer', Prompt='...')` to execute the change.",
     ]
     return {
         "decision": "deny",

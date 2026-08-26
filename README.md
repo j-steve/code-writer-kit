@@ -50,7 +50,6 @@ sequenceDiagram
         RootAgent->>Hook: Tool call: replace_file_content / write_to_file
         Hook-->>RootAgent: {"decision": "deny", "reason": "HARD BLOCK: Must delegate to code_writer"}
     end
-    RootAgent->>Subagent: define_subagent(name="code_writer", system_prompt=<style_guide.md>)
     RootAgent->>Subagent: invoke_subagent(TypeName="code_writer", Prompt="Implement feature...")
     Subagent->>Hook: Tool call: replace_file_content / write_to_file
     Hook->>Hook: Inspect transcript / caller ID -> Verified as code_writer
@@ -89,11 +88,6 @@ When an agent needs to create or modify code files:
      "Prompt": "Implement feature X in file Y adhering strictly to repository style guidelines."
    }
    ```
-2. **Fallback Definition (If Unmounted)**:
-   If `code_writer` is not already defined in the session:
-   - Read `style_guide.md`
-   - Call `define_subagent(name="code_writer", enable_write_tools=true, system_prompt="<style_guide.md>")`
-   - Invoke `code_writer` as above.
 
 ---
 
