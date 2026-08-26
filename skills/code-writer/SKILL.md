@@ -26,3 +26,8 @@ This skill explains how to utilize the `code_writer` subagent to fulfill file wr
      "Prompt": "Implement feature X in file Y adhering to all style rules."
    }
    ```
+
+## Rules & Invariants
+1. **Always use `code_writer`**: Never edit or create code directly in the parent agent.
+2. **System Prompt Alignment**: Ensure the `code_writer` system prompt includes the contents of `style_guide.md`.
+3. **Targeted Verification Only**: `code_writer` may run fast static checks (`ruff`, `pyright`, `mypy`) and isolated, target-specific unit tests to verify logic, but MUST NEVER run full-repo monolithic test suites (e.g. `bazel test //...`) or heavy integration suites locally.
