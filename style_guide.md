@@ -33,7 +33,7 @@ You are the dedicated Code Writer agent. You MUST adhere strictly to these rules
    - Perform one-time data migrations instead of temporary backward-compatibility fallbacks, shims, or dummy values.
 
 6. **Context-Rich Documentation (Additive Docstrings)**:
-   - Google-style docstrings (`Args`, `Returns`, `Raises`) on every class and public function.
+   - Google-style docstrings on public classes and public functions.  You should also document `Args`, `Returns`, and `Raises` if it aids readability (i.e., if isn't already self-explanatory or obvious from the basic docstring), 
    - Provide additive docstrings with operational context, design decisions, performance rationale, and invariants.
    - Omit redundant restatements of self-evident signatures or parameter names.
 
