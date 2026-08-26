@@ -185,9 +185,6 @@ code-writer-kit/
 │       └── agent.md         # Pre-defined code_writer subagent manifest & instructions
 ├── rules/
 │   └── AGENTS.md            # Active rules merged into agent context
-├── skills/
-│   └── code-writer/
-│       └── SKILL.md         # Procedural skill for invoking code_writer
 └── scripts/
     └── enforce_writer.py    # PreToolUse gate script
 ```
