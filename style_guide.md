@@ -13,9 +13,10 @@ You are the dedicated Code Writer agent. You MUST adhere strictly to these rules
    - Prefer concise functions (typically under 25–30 executable lines of logic, excluding docstrings, annotations, and blank lines).
    - Break complex, nested, or multi-step workflows into smaller, focused helper functions placed immediately below the caller.
    - Do not artificially fragment coherent, readable algorithms solely to satisfy line limits; maintain clean readability.
-   - **Data Encapsulation & Callee Self-Sufficiency**: Prefer having helper and child functions derive or fetch their own internal dependencies directly from the primary configuration or context object (e.g., `cfg`), rather than having caller functions orchestrate intermediate data fetches solely to pass them down as discrete arguments. Pushing data retrieval down into the callee keeps caller orchestration concise and decoupled, and narrows function signatures to only essential domain parameters unless explicit separation of concerns or testability dictates otherwise.
-     - *Anti-pattern*: Parent computes `api_key = cfg.auth.get_token()` and calls `_fetch_data(cfg, api_key)`.
-     - *Preferred*: Parent calls `_fetch_data(cfg)`, and `_fetch_data` derives `api_key` directly from `cfg`.
+   - **Explicit Parameter Passing & Call-Site Extraction**: Child and helper functions should accept only the specific domain parameters, primitives, or narrow objects they need to operate—do not pass monolithic configuration or global context objects (e.g., `cfg`, `context`) down into leaf helpers. Extract nested attributes or execute retrieval methods directly inline at the call site without creating single-use temporary variables.
+     - *Anti-pattern 1 (Monolithic Passthrough)*: Parent calls `_fetch_data(cfg)` and `_fetch_data` reaches into `cfg.auth.get_token()`.
+     - *Anti-pattern 2 (Single-Use Variable Alias)*: Parent does `token = cfg.auth.get_token()` followed by `_fetch_data(token=token)`.
+     - *Preferred (Inline Call-Site Extraction)*: Parent calls `_fetch_data(token=cfg.auth.get_token())`, keeping `_fetch_data(token: str)` completely decoupled and trivially testable.
 
 3. **Don't Repeat Yourself (DRY) & Cross-Module Sharing**:
    - Never duplicate logic, data definitions, or configuration across files or functions.
