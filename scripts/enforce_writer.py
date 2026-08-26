@@ -159,11 +159,11 @@ def build_deny_response(target_file: str, guide_path: str) -> dict[str, str]:
     """
     reason_lines: list[str] = [
         f"HARD BLOCK: Direct modification of '{target_file}' by the root agent is disallowed.",
+        "The primary purpose of the `code_writer` subagent is to strictly enforce the repository style guide.",
         "",
         "MANDATORY ACTION REQUIRED:",
-        f"1. Read the style guide from: {guide_path}",
-        "2. Call `define_subagent` with name='code_writer', enable_write_tools=True, and set `system_prompt` to the EXACT contents of that file.",
-        "3. Call `invoke_subagent(TypeName='code_writer', ...)` with the coding task to execute the change.",
+        "1. Call `invoke_subagent(TypeName='code_writer', Role='Code Writer', Prompt='...')` to execute the change.",
+        f"2. (Fallback if code_writer is not defined: read {guide_path} and call `define_subagent` first).",
     ]
     return {
         "decision": "deny",
