@@ -17,7 +17,7 @@ This skill defines the complete operational procedure for delegating repository 
 ## 2. Step-by-Step Delegation Procedure
 
 ### Step 1: Inspect Style & Architectural Guidelines
-Read the repository style guide at `style_guide.md` to review the exact architectural requirements, coding conventions, type annotation rules, and docstring formats that `code_writer` will enforce.
+Read the base plugin `style_guide.md` and check for any workspace root `style_guide.md` augmentations to review the exact architectural requirements, coding conventions, type annotation rules, and docstring formats that `code_writer` will enforce.
 
 ### Step 2: Invoke the `code_writer` Subagent
 The `code_writer` subagent is pre-defined by the plugin and can be invoked directly. Dispatch the subagent using `invoke_subagent` with a detailed prompt including target files, operational requirements, behavioral constraints, and verification instructions:
