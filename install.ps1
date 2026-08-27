@@ -3,7 +3,7 @@
     Installs the Antigravity code-writer-kit plugin on Windows.
 
 .DESCRIPTION
-    Installs code-writer-kit globally or in a workspace, registering hooks, rules, and skills.
+    Installs code-writer-kit globally or in a workspace, registering hooks, rules, agents, and skills.
 
 .PARAMETER Global
     Install globally to ~/.gemini/config/plugins/code-writer-kit (default).
